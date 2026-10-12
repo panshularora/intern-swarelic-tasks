@@ -1,0 +1,78 @@
+[
+  {
+    "id": "rule-001",
+    "name": "VIP Customer Bypass",
+    "priority": 1,
+    "conditions": [
+      {"field": "caller_tag", "operator": "in", "value": ["VIP", "PREMIUM"]}
+    ],
+    "action": {
+      "type": "route",
+      "target": "vip-queue",
+      "message": "Connecting you to your dedicated agent."
+    }
+  },
+  {
+    "id": "rule-002",
+    "name": "Blocked Number",
+    "priority": 2,
+    "conditions": [
+      {"field": "caller_tag", "operator": "eq", "value": "BLOCKED"}
+    ],
+    "action": {
+      "type": "hangup",
+      "message": "This number has been blocked."
+    }
+  },
+  {
+    "id": "rule-003",
+    "name": "After Hours Voicemail",
+    "priority": 3,
+    "conditions": [
+      {"field": "hour_of_day", "operator": "gte", "value": 21}
+    ],
+    "action": {
+      "type": "voicemail",
+      "message": "We are closed. Our hours are 9 AM to 9 PM. Please leave a message."
+    }
+  },
+  {
+    "id": "rule-004",
+    "name": "Early Morning Voicemail",
+    "priority": 4,
+    "conditions": [
+      {"field": "hour_of_day", "operator": "lt", "value": 9}
+    ],
+    "action": {
+      "type": "voicemail",
+      "message": "We are not open yet. Our hours are 9 AM to 9 PM."
+    }
+  },
+  {
+    "id": "rule-005",
+    "name": "Repeat Caller Escalation",
+    "priority": 5,
+    "conditions": [
+      {"field": "call_count", "operator": "gt", "value": 3},
+      {"field": "caller_tag", "operator": "ne", "value": "BLOCKED"}
+    ],
+    "action": {
+      "type": "escalate",
+      "target": "supervisor",
+      "message": "I see you've called multiple times. Let me connect you to a supervisor."
+    }
+  },
+  {
+    "id": "rule-006",
+    "name": "Billing Query Route",
+    "priority": 6,
+    "conditions": [
+      {"field": "intent", "operator": "eq", "value": "billing_query"}
+    ],
+    "action": {
+      "type": "route",
+      "target": "billing-team",
+      "message": "Connecting you to our billing team."
+    }
+  }
+]
